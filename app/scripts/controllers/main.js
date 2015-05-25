@@ -33,4 +33,8 @@ angular.module('demoApp')
         lastname: 'Smith'
       });
     }
+
+    $scope.deleteMessage = function(){
+      childRef.remove();
+    }
   });
