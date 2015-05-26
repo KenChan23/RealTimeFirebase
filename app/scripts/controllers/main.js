@@ -9,52 +9,76 @@
  */
 angular.module('demoApp')
   .controller('MainCtrl', function ($scope, $timeout) {
-    // $scope.awesomeThings = [
-    //   'HTML5 Boilerplate',
-    //   'AngularJS',
-    //   'Karma'
-    // ];
+
     var rootRef = new Firebase("https://glaring-heat-844.firebaseio.com/");
-    var childRef = rootRef.child("message");
-    // var childRef = rootRef.child('message');
-    // var parentRef = childRef.parent();
-    
-    childRef.on('value', function(snapshot){
+    var messagesRef = rootRef.child('messages');
+
+    $scope.currentUser = null;
+    $scope.currentText = null;
+
+    messagesRef.on('value', function(snapshot){
       $timeout(function(){
         var snapshotVal = snapshot.val();
-        console.log(snapshot);
         console.log(snapshotVal);
-        $scope.message = snapshotVal;
+        $scope.messages = snapshotVal;
       });
     });
 
-    $scope.$watch('message.text', function(newVal){
-      if(!newVal){
-        return;
-      }
-      childRef.update({
-        text: newVal
-      });
-      console.log(newVal);
-    });
+    $scope.sendMessage = function(){
+      var newMessage = {
+        user: $scope.currentUser,
+        text: $scope.currentText
+      };
 
-    $scope.setMessage = function(){
-      childRef.set({
-        user: 'Bob',
-        text: 'Hi!'
-      });
-    }
+      messagesRef.push(newMessage);
+    };
 
-    $scope.updateMessage = function(){
-      // childRef.update({
-      //   text: 'Bye'
-      // });
-      childRef.set({
-        lastname: 'Smith'
-      });
-    }
+    /*
+      Commented this out...
+      Simple set, update and delete CRUD operations
+    */
 
-    $scope.deleteMessage = function(){
-      childRef.remove();
-    }
+    // var rootRef = new Firebase("https://glaring-heat-844.firebaseio.com/");
+    // var childRef = rootRef.child("message");
+    // // var childRef = rootRef.child('message');
+    // // var parentRef = childRef.parent();
+    
+    // childRef.on('value', function(snapshot){
+    //   $timeout(function(){
+    //     var snapshotVal = snapshot.val();
+    //     console.log(snapshot);
+    //     console.log(snapshotVal);
+    //     $scope.message = snapshotVal;
+    //   });
+    // });
+
+    // $scope.$watch('message.text', function(newVal){
+    //   if(!newVal){
+    //     return;
+    //   }
+    //   childRef.update({
+    //     text: newVal
+    //   });
+    //   console.log(newVal);
+    // });
+
+    // $scope.setMessage = function(){
+    //   childRef.set({
+    //     user: 'Bob',
+    //     text: 'Hi!'
+    //   });
+    // }
+
+    // $scope.updateMessage = function(){
+    //   // childRef.update({
+    //   //   text: 'Bye'
+    //   // });
+    //   childRef.set({
+    //     lastname: 'Smith'
+    //   });
+    // }
+
+    // $scope.deleteMessage = function(){
+    //   childRef.remove();
+    // }
   });
