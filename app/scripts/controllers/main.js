@@ -21,14 +21,21 @@ angular.module('demoApp')
       $timeout(function(){
         var snapshotVal = snapshot.val();
         console.log(snapshotVal);
-        $scope.messages.push(snapshotVal);
+        $scope.messages.push({
+          text: snapshotVal.text,
+          user: snapshotVal.user,
+          name: snapshot.name()
+        });
       });
     });
 
     messagesRef.on('child_changed', function(snapshot){
       $timeout(function(){
         var snapshotVal = snapshot.val();
+        console.log(snapshot.name());
         var message = findMessageByName(snapshot.name());
+        console.log(message);
+        console.log(snapshotVal);
         message.text = snapshotVal.text;
       });
     });
@@ -37,6 +44,7 @@ angular.module('demoApp')
       var messageFound = null;
       for(var i = 0; i < $scope.messages.length; i++){
         var currentMessage = $scope.messages[i];
+        console.log(currentMessage);
         if(currentMessage.name === name){
           messageFound = currentMessage;
           break;
