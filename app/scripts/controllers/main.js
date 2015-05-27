@@ -15,21 +15,66 @@ angular.module('demoApp')
 
     $scope.currentUser = null;
     $scope.currentText = null;
+    $scope.messages = [];
 
-    messagesRef.on('value', function(snapshot){
+    messagesRef.on('child_added', function(snapshot){
       $timeout(function(){
         var snapshotVal = snapshot.val();
         console.log(snapshotVal);
-        $scope.messages = snapshotVal;
+        $scope.messages.push(snapshotVal);
       });
     });
+
+    messagesRef.on('child_changed', function(snapshot){
+      $timeout(function(){
+        var snapshotVal = snapshot.val();
+        var message = findMessageByName(snapshot.name());
+        message.text = snapshotVal.text;
+      });
+    });
+
+    function findMessageByName(name){
+      var messageFound = null;
+      for(var i = 0; i < $scope.messages.length; i++){
+        var currentMessage = $scope.messages[i];
+        if(currentMessage.name === name){
+          messageFound = currentMessage;
+          break;
+        }
+      }
+      return messageFound;
+    }
+
+    messagesRef.on('child_removed', function(snapshot){
+      $timeout(function(){
+        deleteMessageByName(snapshot.name());
+      });
+    });
+
+    function deleteMessageByName(name){
+      for(var i = 0; i < $scope.messages.length; i++){
+        var currentMessage = $scope.messages[i];
+        if(currentMessage.name === name){
+          $scope.messages.splice(i, 1);
+          break;
+        }
+      }
+    }
+
+    // messagesRef.on('value', function(snapshot){
+    //   $timeout(function(){
+    //     var snapshotVal = snapshot.val();
+    //     console.log(snapshotVal);
+    //     $scope.messages = snapshotVal;
+    //   });
+    // });
 
     $scope.sendMessage = function(){
       var newMessage = {
         user: $scope.currentUser,
         text: $scope.currentText
       };
-
+      console.log($scope);
       messagesRef.push(newMessage);
     };
 
