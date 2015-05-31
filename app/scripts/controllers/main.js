@@ -45,7 +45,7 @@ angular.module('demoApp')
         message.text = snapshotVal.text;
       });
     });
-
+ 
     function findMessageByName(name){
       var messageFound = null;
       for(var i = 0; i < $scope.messages.length; i++){
